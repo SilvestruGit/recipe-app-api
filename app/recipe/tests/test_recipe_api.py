@@ -225,7 +225,7 @@ class PrivateRecipeAPITest(TestCase):
             'title': 'Thai Curry',
             'time_minutes': 30,
             'price': Decimal('15.43'),
-            'tags':[
+            'tags': [
                 {'name': 'Thai'},
                 {'name': 'Dinner'},
             ],
@@ -239,8 +239,8 @@ class PrivateRecipeAPITest(TestCase):
         self.assertEqual(recipe.tags.count(), 2)
         for tag in payload['tags']:
             exists = recipe.tags.filter(
-                name = tag['name'],
-                user = self.user,
+                name=tag['name'],
+                user=self.user,
             ).exists()
             self.assertTrue(exists)
 
@@ -251,7 +251,7 @@ class PrivateRecipeAPITest(TestCase):
             'title': 'Ice cream',
             'time_minutes': 5,
             'price': Decimal('1.5'),
-            'tags':[
+            'tags': [
                 {'name': 'Dessert'},
                 {'name': 'With milk'},
             ],
@@ -266,9 +266,7 @@ class PrivateRecipeAPITest(TestCase):
         self.assertIn(tag_dessert, recipe.tags.all())
         for tag in payload['tags']:
             exists = recipe.tags.filter(
-                name = tag['name'],
-                user = self.user,
+                name=tag['name'],
+                user=self.user,
             ).exists()
             self.assertTrue(exists)
-
-
