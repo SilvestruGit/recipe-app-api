@@ -40,6 +40,7 @@ def create_recipe(user, **params):
     recipe = Recipe.objects.create(user=user, **defaults)
     return recipe
 
+
 def create_user(**params):
     """Create and return a new user."""
     return get_user_model().objects.create_user(**params)
@@ -63,7 +64,10 @@ class PrivateRecipeAPITest(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.user = create_user(email='test@example.com', password='parola1234',)
+        self.user = create_user(
+            email='test@example.com',
+            password='parola1234',
+        )
 
         self.client.force_authenticate(self.user)
 
@@ -151,7 +155,7 @@ class PrivateRecipeAPITest(TestCase):
             description='Recipe description',
             link='https://superbet.ro/',
         )
-        
+
         payload = {
             'title': 'New recipe title',
             'description': 'New recipe description',
@@ -182,25 +186,28 @@ class PrivateRecipeAPITest(TestCase):
         )
 
         url = detail_url(recipe.id)
-        res = self.client.patch(url, {'user':new_user})
+        self.client.patch(url, {'user': new_user})
         recipe.refresh_from_db()
         self.assertEqual(recipe.user, self.user)
 
     def test_delete_recipe(self):
         """Test delete recipe works."""
         recipe = create_recipe(user=self.user)
-        
+
         url = detail_url(recipe.id)
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Recipe.objects.filter(id=recipe.id).exists())
-        
+
         res = self.client.get(url)
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_recipe_delete_other_user_recipe_error(self):
         """Test trying to delete other users recipe gives error."""
-        other_user = create_user(email='other@example.com', password='parola1234')
+        other_user = create_user(
+            email='other@example.com',
+            password='parola1234',
+        )
         recipe = create_recipe(user=other_user)
 
         url = detail_url(recipe.id)
