@@ -56,7 +56,7 @@ class PublicRecipeAPITests(TestCase):
         self.client = APIClient()
 
     def test_auth_required(self):
-        """Test auth is required to claa API."""
+        """Test auth is required to call API."""
         res = self.client.get(RECIPES_URL)
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -185,11 +185,12 @@ class PrivateRecipeAPITest(TestCase):
 
         recipe = create_recipe(
             user=self.user,
-            title='Test title',
         )
 
         url = detail_url(recipe.id)
-        self.client.patch(url, {'user': new_user})
+        payload = {'user': new_user.id}
+        self.client.patch(url, payload)
+        
         recipe.refresh_from_db()
         self.assertEqual(recipe.user, self.user)
 
@@ -311,7 +312,7 @@ class PrivateRecipeAPITest(TestCase):
 
         payload = {'tags': []}
         url = detail_url(recipe.id)
-        res= self.client.patch(url, payload, format='json')
+        res = self.client.patch(url, payload, format='json')
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(recipe.tags.count(), 0)
